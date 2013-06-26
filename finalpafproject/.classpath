@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="lib" path="libs/apache-commons.jar"/>
+	<classpathentry kind="lib" path="libs/commons-lang-2.6.jar"/>
+	<classpathentry kind="lib" path="libs/ezmorph-1.0.6.jar"/>
+	<classpathentry kind="lib" path="libs/slf4j-api-1.7.5.jar"/>
+	<classpathentry kind="lib" path="libs/slf4j-ext-1.7.5.jar"/>
+	<classpathentry kind="lib" path="libs/slf4j-jdk14-1.7.5.jar"/>
+	<classpathentry kind="lib" path="libs/slf4j-migrator-1.7.5.jar"/>
+	<classpathentry kind="lib" path="libs/swingx-ws-1.0.jar"/>
+	<classpathentry kind="lib" path="libs/swingx.jar"/>
+	<classpathentry kind="lib" path="libs/javacsv.jar"/>
+	<classpathentry kind="lib" path="libs/jcommon-1.0.17.jar"/>
+	<classpathentry kind="lib" path="libs/jfreechart-1.0.14.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

@@ -18,7 +18,11 @@ import controller.maps.MapWaypoint;
 import controller.maps.MapWaypointPainter;
 import controller.maps.MapWaypointRenderer;
 import database.AttackDate;
+import database.AttackDay;
+import database.AttackUsername;
 import database.Country;
+import database.GroupedAttack;
+import database.IPAddress;
 import database.MainBase;
 import database.Parameters;
 import database.Attack;
@@ -121,29 +125,263 @@ public class ApplicationController {
 		mainBase.setDataBase(attackList);
 	}
 
-	public void sortPerCountry() {
-		// TODO Auto-generated method stub
-
+	public void sortPerCountry() throws IOException {
+		sortPerIP();
+		ArrayList<IPAddress> ipList = mainBase.getAttackIPAddressList();
+		ArrayList<Country> countryList = new ArrayList<Country>();
+		for(IPAddress ip : ipList) {
+			boolean ind = false;
+			for(Country country : countryList) {
+				if(country.compareTo(ip))
+					country.addIPAddress(ip);
+			}
+			if(!ind) {
+				Country newCountry = new Country(ip.getCountry());
+				countryList.add(newCountry);
+			}
+		}
+		countryList = sortNumberCountry(countryList);
+		mainBase.setAttackCountryList(countryList);
 	}
 
 	public void sortPerDay() {
-		// TODO Auto-generated method stub
-
+		ArrayList<AttackDay> dayList = new ArrayList<AttackDay>();
+		boolean ind;
+		for(Attack att : mainBase.getAttackList()) {
+			ind = false;
+			for(AttackDay day : dayList) {
+				if(day.compareTo(att))
+					day.add(att);
+			}
+			if(!ind) {
+				AttackDay newDay = new AttackDay(att.getDay()+"/"+att.getMonth()+"/"+att.getYear());
+				dayList.add(newDay);
+			}
+		}
+		dayList = sortAttackDay(dayList);
+		mainBase.setAttackDayList(dayList);
 	}
 
 	public void sortPerGroupedAttack() {
-		// TODO Auto-generated method stub
-
+		ArrayList<GroupedAttack> groupList = new ArrayList<GroupedAttack>();
+		boolean ind;
+		for(Attack att : mainBase.getAttackList()) {
+			ind = false;
+			for(GroupedAttack group : groupList) {
+				if(group.compareTo(att)) 
+					group.add(att);
+			}
+			if(!ind) {
+				GroupedAttack newGroup = new GroupedAttack("");
+				groupList.add(newGroup);
+			}
+		}
+		groupList = sortNumberGroupedAttack(groupList);
+		mainBase.setGroupedAttackList(groupList);
 	}
 
 	public void sortPerIP() {
-		// TODO Auto-generated method stub
-
+		ArrayList<IPAddress> ipList = new ArrayList<IPAddress>();
+		boolean ind;
+		for(Attack att : mainBase.getAttackList()) {
+			ind = false;
+			for(IPAddress ip : ipList) {
+				if(ip.compareTo(att)) ip.add(att);
+			}
+			if(!ind) {
+				IPAddress newIP = new IPAddress(att.getIP());
+				ipList.add(newIP);
+			}
+		}
+		ipList = sortNumberIPAddress(ipList);
+		mainBase.setAttackIPAddressList(ipList);
 	}
 
 	public void sortPerUsername() {
-		// TODO Auto-generated method stub
+		ArrayList<AttackUsername> usernameList = new ArrayList<AttackUsername>();
+		boolean ind;
+		for(Attack att : mainBase.getAttackList()) {
+			ind = false;
+			for(AttackUsername username : usernameList) {
+				if(username.compareTo(att)) username.add(att);
+			}
+			if(!ind) {
+				AttackUsername newUsername = new AttackUsername(att.getUsername());
+				usernameList.add(newUsername);
+			}
+		}
+		usernameList = sortAttackUsername(usernameList);
+		mainBase.setAttackUsernameList(usernameList);
+	}
 
+	public ArrayList<AttackDay> sortAttackDay(ArrayList<AttackDay> argList) {
+		ArrayList<AttackDay> attackDayList = argList;
+		int n = attackDayList.size();
+		int min = 0;
+		for(int i = 0 ; i<(n-1) ; i++) {
+			min = i;
+			for(int j = i+1 ; j<n ; j++){
+				if(attackDayList.get(j).before(attackDayList.get(i)))
+					min = j;
+			}
+			if(min!=i) {
+				AttackDay tempAttackDay = attackDayList.get(i);
+				attackDayList.set(i, attackDayList.get(min));
+				attackDayList.set(min, tempAttackDay);
+			}
+		}
+		return attackDayList;
+	}
+
+	public ArrayList<AttackDay> sortNumberAttackDay(ArrayList<AttackDay> argList) {
+		ArrayList<AttackDay> attackDayList = argList;
+		int n = attackDayList.size();
+		int min = 0;
+		for(int i = 0 ; i<(n-1) ; i++) {
+			min = i;
+			for(int j = i+1 ; j<n ; j++) {
+				if(attackDayList.get(i).getNumber()>(attackDayList.get(j).getNumber()))
+					min = j;
+			}
+			if(min!=i) {
+				AttackDay tempAttackDay = attackDayList.get(i);
+				attackDayList.set(i, attackDayList.get(min));
+				attackDayList.set(min, tempAttackDay);
+			}
+		}
+		return attackDayList;
+	}
+
+	public ArrayList<Country> sortCountry(ArrayList<Country> argList) {
+		ArrayList<Country> countryList = argList;
+		int n = countryList.size();
+		int min = 0;
+		for(int i = 0 ; i<(n-1) ; i++) {
+			min = i;
+			for(int j = i+1 ; j<n ; j++) {
+				if (countryList.get(j).before(countryList.get(i)))
+					min=j;
+			}
+			if(min!=i) {
+				Country tempCountry=countryList.get(i);
+				countryList.set(i, countryList.get(min));
+				countryList.set(min, tempCountry);
+			}
+		}
+		return countryList;
+	}
+
+	public ArrayList<Country> sortNumberCountry(ArrayList<Country> argList) {
+		ArrayList<Country> countryList = argList;
+		int n = countryList.size();
+		int min = 0;
+		for(int i = 0 ; i<(n-1) ; i++) {
+			min = i;
+			for(int j = i+1 ; j<n ; j++) {
+				if(countryList.get(i).getNumber()>(countryList.get(j).getNumber()))
+					min = j;
+			}
+			if(min!=i) {
+				Country tempCountry = countryList.get(i);
+				countryList.set(i, countryList.get(min));
+				countryList.set(min, tempCountry);
+			}
+		}
+		return countryList;
+	}
+
+	public ArrayList<AttackUsername> sortAttackUsername(ArrayList<AttackUsername> argList) {
+		ArrayList<AttackUsername> attackUsernameList = argList;
+		int n = attackUsernameList.size();
+		int min = 0;
+		for(int i = 0 ; i<(n-1) ; i++) {
+			min = i;
+			for(int j = i+1 ; j<n ; j++) {
+				if(attackUsernameList.get(j).before(attackUsernameList.get(i)))
+					min = j;
+			}
+			if(min!=i) {
+				AttackUsername tempAttackUsername = attackUsernameList.get(i);
+				attackUsernameList.set(i, attackUsernameList.get(min));
+				attackUsernameList.set(min, tempAttackUsername);
+			}
+		}
+		return attackUsernameList;
+	}
+
+	public ArrayList<AttackUsername> sortNumberAttackUsername(ArrayList<AttackUsername> argList) {
+		ArrayList<AttackUsername> attackUsernameList = argList;
+		int n = attackUsernameList.size();
+		int min = 0;
+		for(int i = 0 ; i<(n-1) ; i++) {
+			min = i;
+			for(int j = i+1 ; j<n ; j++) {
+				if(attackUsernameList.get(i).getNumber()>(attackUsernameList.get(j).getNumber()))
+					min = j;
+			}
+			if(min!=i) {
+				AttackUsername tempAttackUsername = attackUsernameList.get(i);
+				attackUsernameList.set(i, attackUsernameList.get(min));
+				attackUsernameList.set(min, tempAttackUsername);
+			}
+		}
+		return attackUsernameList;
+	}
+
+	public ArrayList<IPAddress> sortIPAddress(ArrayList<IPAddress> argList) {
+		ArrayList<IPAddress> ipAddressList = argList;
+		int n = ipAddressList.size();
+		int min = 0;
+		for(int i = 0 ; i<(n-1) ; i++) {
+			min = i;
+			for(int j = i+1 ; j<n ; j++) {
+				if(ipAddressList.get(j).before(ipAddressList.get(i))) min = j;
+			}
+			if(min!=i) {
+				IPAddress tempIPAddress = ipAddressList.get(i);
+				ipAddressList.set(i, ipAddressList.get(min));
+				ipAddressList.set(min, tempIPAddress);
+			}
+		}
+		return ipAddressList;
+	}
+
+	public ArrayList<IPAddress> sortNumberIPAddress(ArrayList<IPAddress> argList) {
+		ArrayList<IPAddress> ipAddressList = argList;
+		int n = ipAddressList.size();
+		int min = 0;
+		for(int i = 0 ; i<(n-1) ;i++) {
+			min = i;
+			for(int j = i+1 ; j<n ; j++) {
+				if(ipAddressList.get(i).getNumber()>(ipAddressList.get(j).getNumber()))
+					min = j;
+			}
+			if(min!=i) {
+				IPAddress tempIPAddress = ipAddressList.get(i);
+				ipAddressList.set(i, ipAddressList.get(min));
+				ipAddressList.set(min, tempIPAddress);
+			}
+		}
+		return ipAddressList;
+	}
+
+	public ArrayList<GroupedAttack> sortNumberGroupedAttack(ArrayList<GroupedAttack> argList) {
+		ArrayList<GroupedAttack> groupedAttackList = argList;
+		int n = groupedAttackList.size();
+		int min = 0;
+		for(int i = 0 ; i<(n-1) ; i++) {
+			min = i;
+			for(int j = i+1 ; j<n ; j++) {
+				if(groupedAttackList.get(i).getNumber()>(groupedAttackList.get(j).getNumber()))
+					min = j;
+			}
+			if(min!=i) {
+				GroupedAttack tempGroupedAttack = groupedAttackList.get(i);
+				groupedAttackList.set(i, groupedAttackList.get(min));
+				groupedAttackList.set(min, tempGroupedAttack);
+			}
+		}
+		return groupedAttackList;
 	}
 
 	public void update() {

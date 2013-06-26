@@ -8,19 +8,25 @@ public class Country extends Classification {
 		super(name);
 		this.setType("username");
 	}
-	
-	public boolean compareTo(String name) {
-	if (this.getName().equals(name))
-		return true;
-	else
-		return false;
+
+	public void addIPAddress(IPAddress ip) {
+		for(Attack att : ip.getAttackList()) {
+			add(att);
+		}
 	}
-	
+
+	public boolean compareTo(String name) {
+		if (this.getName().equals(name))
+			return true;
+		else
+			return false;
+	}
+
 	@Override
 	public boolean compareTo(Attack attack) {
 		return false;
 	}
-	
+
 	public boolean compareTo(IPAddress ipAddress) throws IOException {
 		ipAddress.setCountry();
 		if (this.getName().equals(ipAddress.getCountry())) 
@@ -28,7 +34,7 @@ public class Country extends Classification {
 		else 
 			return false;
 	}
-	
+
 	@Override
 	public boolean before(Classification classification) {
 		if(getName().compareToIgnoreCase(classification.getName())<0)

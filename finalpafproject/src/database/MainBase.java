@@ -19,7 +19,7 @@ public class MainBase {
 	public ArrayList<AttackUsername> getAttackUsernameList() { return attackUsernameList; }
 	public ArrayList<Country> getAttackCountryList() { return attackCountryList; }
 	public ArrayList<IPAddress> getAttackIPAddressList() { return attackIPAddressList; }
-	public ArrayList<GroupedAttack> getAttackGroupedAttackList() { return attackGroupedAttackList; }
+	public ArrayList<GroupedAttack> getGroupedAttackList() { return attackGroupedAttackList; }
 	
 	// SETTERS
 	public void setDataBase(ArrayList<Attack> attackList) { this.attackList = attackList; }
@@ -27,6 +27,6 @@ public class MainBase {
 	public void setAttackUsernameList(ArrayList<AttackUsername> attackUsernameList) { this.attackUsernameList = attackUsernameList; }
 	public void setAttackCountryList(ArrayList<Country> attackCountryList) { this.attackCountryList = attackCountryList; }
 	public void setAttackIPAddressList(ArrayList<IPAddress> attackIPAddressList) { this.attackIPAddressList = attackIPAddressList; }
-	public void setAttackGroupedAttackList(ArrayList<GroupedAttack> attackGroupedAttackList) { this.attackGroupedAttackList = attackGroupedAttackList; }
+	public void setGroupedAttackList(ArrayList<GroupedAttack> attackGroupedAttackList) { this.attackGroupedAttackList = attackGroupedAttackList; }
 	
 }

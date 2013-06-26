@@ -2,6 +2,8 @@ package ui.buttons;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.IOException;
+
 import javax.swing.JButton;
 
 @SuppressWarnings("serial")
@@ -17,7 +19,11 @@ public class ResultPerCountryButton extends JButton implements MouseListener {
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		buttonsRowPanel.getMainFrame().getController().sortPerCountry();
+		try {
+			buttonsRowPanel.getMainFrame().getController().sortPerCountry();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 	}
 	
 	@Override

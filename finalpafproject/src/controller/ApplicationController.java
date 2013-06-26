@@ -12,6 +12,8 @@ import java.util.regex.Pattern;
 
 import org.jdesktop.swingx.JXMapViewer;
 
+import com.csvreader.CsvReader;
+
 import controller.maps.MapWaypoint;
 import controller.maps.MapWaypointPainter;
 import controller.maps.MapWaypointRenderer;
@@ -27,10 +29,9 @@ import ui.maps.JMapPoint;
 
 public class ApplicationController {
 
-	@SuppressWarnings("unused")
 	private MainFrame mainFrame;
 	private Parameters parameters = new Parameters();
-	private MainBase mainBase;
+	private MainBase mainBase = new MainBase();
 
 	public ApplicationController() {
 		mainFrame = new MainFrame(this);	
@@ -154,6 +155,24 @@ public class ApplicationController {
 		ArrayList<Country> countries = this.mainBase.getAttackCountryList();
 		JMapPanel map = new JMapPanel(this.mainFrame);
 		for(Country country : countries) {
+			String currentCountry = "blablabla";
+			CsvReader countriesReader = null;
+			try {
+				countriesReader = new CsvReader("dbcountries.csv");
+				while(!currentCountry.equals(country)) {
+					countriesReader.readRecord();
+					currentCountry = countriesReader.get(0);
+					System.out.println(country);
+				}
+				System.out.println(country);
+				System.out.println(currentCountry);
+				int attNb = country.getNumber();
+				Double longitude = new Double(countriesReader.get(2).replace(",","."));
+				Double latitude = new Double(countriesReader.get(3).replace(",","."));
+				this.addPointToMap(map, new JMapPoint(latitude,longitude,attNb));
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 		}
 	}
 
@@ -162,7 +181,7 @@ public class ApplicationController {
 	 * @param map
 	 * @param point
 	 */
-	@SuppressWarnings({ "unchecked" })
+	@SuppressWarnings("unchecked")
 	public void addPointToMap(JMapPanel map, JMapPoint point) {
 		MapWaypointPainter<JXMapViewer> waypainter = (MapWaypointPainter<JXMapViewer>) map.getOverlayPainter();
 		@SuppressWarnings("rawtypes")

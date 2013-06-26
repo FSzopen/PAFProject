@@ -5,12 +5,11 @@ import java.util.ArrayList;
 public class MainBase {
 
 	private ArrayList<Attack> attackList = new ArrayList<Attack>();
-	private ArrayList<AttackDay> attackDayList;
-	private ArrayList<AttackUsername> attackUsernameList;
-	private ArrayList<Country> attackCountryList;
-	private ArrayList<IPAddress> attackIPAddressList;
-	private ArrayList<GroupedAttack> attackGroupedAttackList;
-
+	private ArrayList<AttackDay> attackDayList = new ArrayList<AttackDay>();
+	private ArrayList<AttackUsername> attackUsernameList = new ArrayList<AttackUsername>();
+	private ArrayList<Country> attackCountryList = new ArrayList<Country>();
+	private ArrayList<IPAddress> attackIPAddressList = new ArrayList<IPAddress>();
+	private ArrayList<GroupedAttack> attackGroupedAttackList = new ArrayList<GroupedAttack>();
 
 	public MainBase() {}
 

@@ -28,9 +28,9 @@ public class ParameterJFrame extends JFrame {
 	 * @param controller
 	 */
 	public ParameterJFrame(ApplicationController controller) {
-		super ("Paramètres");
-		final ApplicationController controllerTemp=controller;
-		final ParameterJFrame parametersJFrameTemp=this;
+		super("Paramètres");
+		final ApplicationController controllerTemp = controller;
+		final ParameterJFrame parametersJFrameTemp = this;
 		this.controller = controller;
 		parameters = controller.getParameters();
 		this.setSize(600, 250);
@@ -58,7 +58,7 @@ public class ParameterJFrame extends JFrame {
 		ipGraph.add("Courbe");
 		ipGraph.add("Diagramme \"bâton\"");
 		ipGraph.add("Camembert");
-		ipGraphRadioPanel= new RadioPanel(ipGraph, " Par IP : ", parameters.getPerIPGraph());
+		ipGraphRadioPanel = new RadioPanel(ipGraph, " Par IP : ", parameters.getPerIPGraph());
 
 		ArrayList<String> attackGroupGraph = new ArrayList<String>();
 		attackGroupGraph.add("Courbe");
@@ -70,7 +70,7 @@ public class ParameterJFrame extends JFrame {
 		usernameGraph.add("Courbe");
 		usernameGraph.add("Diagramme \"bâton\"");
 		usernameGraph.add("Camembert");
-		usernameGraphRadioPanel = new RadioPanel(usernameGraph, " Par nom d'utilisateur : ", parameters.getPerUserNameGraph());
+		usernameGraphRadioPanel = new RadioPanel(usernameGraph, " Par nom d'utilisateur : ", parameters.getPerUsernameGraph());
 
 		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 
@@ -81,12 +81,13 @@ public class ParameterJFrame extends JFrame {
 		add(attackGroupGraphRadioPanel);
 		add(usernameGraphRadioPanel);
 
-		JButton validateButton =new JButton("valider");
+		JButton validateButton = new JButton("valider");
 		validateButton.addMouseListener(
 				new MouseListener(){
 
 					@Override
 					public void mouseClicked(MouseEvent e) {
+						parametersJFrameTemp.extractParameters();
 						controllerTemp.setParameters(parameters);
 						parametersJFrameTemp.dispose();
 					}
@@ -110,6 +111,7 @@ public class ParameterJFrame extends JFrame {
 					public void mouseReleased(MouseEvent e) {
 						// TODO Auto-generated method stub
 					}
+					
 				});
 		add(validateButton);
 
@@ -126,7 +128,7 @@ public class ParameterJFrame extends JFrame {
 		parameters.setPerCountryGraph(Integer.parseInt(countryGraphRadioPanel.getButtonGroup().getSelection().getActionCommand()));
 		parameters.setPerIPGraph(Integer.parseInt(ipGraphRadioPanel.getButtonGroup().getSelection().getActionCommand()));
 		parameters.setPerAttackGroupGraph(Integer.parseInt(attackGroupGraphRadioPanel.getButtonGroup().getSelection().getActionCommand()));
-		parameters.setPerUserNameGraph(Integer.parseInt(usernameGraphRadioPanel.getButtonGroup().getSelection().getActionCommand()));
+		parameters.setPerUsernameGraph(Integer.parseInt(usernameGraphRadioPanel.getButtonGroup().getSelection().getActionCommand()));
 	}
 
 	
@@ -141,6 +143,7 @@ public class ParameterJFrame extends JFrame {
 								null, null, null);
 				switch(response) {
 				case JOptionPane.OK_OPTION:
+					this.extractParameters();
 					controller.setParameters(parameters);
 					break;
 				case JOptionPane.NO_OPTION:

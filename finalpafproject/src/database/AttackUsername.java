@@ -7,6 +7,11 @@ public class AttackUsername extends Classification {
 		this.setType("username");
 	}
 	
+	public AttackUsername(String name, Attack att) {
+		super(name, att);
+		this.setType("username");
+	}
+
 	public boolean compareTo(String name) {
 	if(this.getName().equals(name))
 		return true;

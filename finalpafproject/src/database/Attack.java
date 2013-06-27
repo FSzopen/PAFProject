@@ -45,12 +45,14 @@ public class Attack {
 	 * @return
 	 */
 	public boolean timeBefore(Attack att) {
-		String[] split1=hour.split(":");
-		String[] split2=att.getHour().split(":");
-		int i1 = (year*10000 + month*100 + day)*24*60+60*Integer.parseInt(split1[0])+Integer.parseInt(split1[1]);
-		int i2 = (att.getYear()*1000 + att.getMonth()*100 + att.getDay())*24*60+60*Integer.parseInt(split2[0])+Integer.parseInt(split2[1]);;
-		if(i1<i2) return true; else return false;
-
+		String[] split1 = hour.split(":");
+		String[] split2 = att.getHour().split(":");
+		int i1 = (year*10000 + month*100 + day)*24*60 + 60*Integer.parseInt(split1[0]) + Integer.parseInt(split1[1]);
+		int i2 = (att.getYear()*1000 + att.getMonth()*100 + att.getDay())*24*60 + 60*Integer.parseInt(split2[0]) + Integer.parseInt(split2[1]);
+		if(i1<i2) 
+			return true; 
+		else 
+			return false;
 	}
 
 	/**
@@ -59,7 +61,7 @@ public class Attack {
 	 * @return
 	 */
 	public boolean sameDay(Attack att) {
-		if((year==att.getDay())&&(month==att.getMonth())&&(day==att.getDay())) return true;
+		if((year==att.getYear())&&(month==att.getMonth())&&(day==att.getDay())) return true;
 		else return false;
 	}
 
@@ -71,7 +73,7 @@ public class Attack {
 	public boolean closeDay(Attack att) {
 		if(year==att.getYear()) {
 			if(month==att.getMonth()) {
-				if((day==att.getDay())||(day==att.getDay()-1)||(day==att.getDay()-1)) {
+				if((day==att.getDay())||(day==att.getDay()-1)||(day==att.getDay()+1)) {
 					return true ;
 				}
 				else {
@@ -144,24 +146,28 @@ public class Attack {
 				int time2 = hour2*60 + minute2;
 				if(Math.abs(time1-time2)<=30)
 					return true;
-				else return false;
+				else 
+					return false;
 			}
 			else if(before(att)) {
 				int time1=hour1*60+minute1;
 				int time2=hour2*60+minute2+24*60;
 				if(Math.abs(time1-time2)<=30)
 					return true;
-				else return false;
+				else 
+					return false;
 			}
 			else {
 				int time1=hour1*60 + minute1 + 24*60;
 				int time2=hour2*60 + minute2;
 				if(Math.abs(time1-time2)<=30)
 					return true;
-				else return false;
+				else 
+					return false;
 			}
 		}
-		else return false;
+		else 
+			return false;
 	}
 
 	/**
@@ -172,10 +178,22 @@ public class Attack {
 	 * @return
 	 */
 	public boolean compare(String st1, String st2, int value) {
-		return (Math.abs(( 
-				new Character(st1.charAt(0)).compareTo( 
-						new Character(st2.charAt(0))))*26 + new Character(st1.charAt(1)).compareTo( 
-								new Character(st2.charAt(1)))))<=value;
+		if ((st1.length()>1)&&(st2.length()>1)) {
+			return (Math.abs(( 
+					new Character(st1.charAt(0)).compareTo( 
+							new Character(st2.charAt(0))))*26 + new Character(st1.charAt(1)).compareTo( 
+									new Character(st2.charAt(1)))))<=value;
+		}
+		else {
+			if ((st1.length()==1)&&(st2.length()==1)) {
+				return (Math.abs(( 
+						new Character(st1.charAt(0)).compareTo( 
+								new Character(st2.charAt(0))))))<=value;
+			}
+			else { 
+				return false;
+			}
+		}
 	}
 
 	/**
@@ -187,9 +205,13 @@ public class Attack {
 		if(areClose(att)) {
 			if(compare(username,att.getUsername(),6))
 				return true;
-			else if(ip==att.getIP()) return true; else return false;
+			else if(ip==att.getIP()) 
+				return true; 
+			else 
+				return false;
 		}
-		else return false;
+		else 
+			return false;
 	}
 
 	// GETTERS

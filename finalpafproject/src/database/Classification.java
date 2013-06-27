@@ -15,6 +15,13 @@ public abstract class Classification {
 		attackList = new ArrayList<Attack>();
 	}
 	
+	public Classification(String name, Attack att) {
+		this.name = name;
+		number = 0;
+		attackList = new ArrayList<Attack>();
+		add(att);
+	}
+	
 	public void add(Attack attack) {
 		attackList.add(attack);
 		number++;

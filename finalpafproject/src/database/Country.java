@@ -9,6 +9,13 @@ public class Country extends Classification {
 		this.setType("username");
 	}
 
+	public Country(String country, IPAddress ipAdd) {
+		super(country);
+		for(Attack att : ipAdd.getAttackList()) {
+ 			add(att);
+		}
+	}
+
 	public void addIPAddress(IPAddress ip) {
 		for(Attack att : ip.getAttackList()) {
 			add(att);

@@ -25,7 +25,7 @@ public class Parameters {
 	public int getPerCountryGraph() { return perCountryGraph; }
 	public int getPerIPGraph() { return perIPGraph; }
 	public int getPerAttackGroupGraph() { return perAttackGroupGraph; }
-	public int getPerUserNameGraph() { return perUsernameGraph; }
+	public int getPerUsernameGraph() { return perUsernameGraph; }
 	
 	// SETTERS
 	public void setPerDateType(int perDateType) { this.perDateType = perDateType; }
@@ -33,6 +33,6 @@ public class Parameters {
 	public void setPerCountryGraph(int perCountryGraph) { this.perCountryGraph = perCountryGraph; }
 	public void setPerIPGraph(int perIPGraph) { this.perIPGraph = perIPGraph; }
 	public void setPerAttackGroupGraph(int perAttackGroupGraph) { this.perAttackGroupGraph = perAttackGroupGraph; }
-	public void setPerUserNameGraph(int perUserNameGraph) { this.perUsernameGraph = perUserNameGraph; }
+	public void setPerUsernameGraph(int perUsernameGraph) { this.perUsernameGraph = perUsernameGraph; }
 	
 }

@@ -5,9 +5,18 @@ public class AttackDay extends Classification {
 	private int day;
 	private int month;
 	private int year;
-	
+
 	public AttackDay(String name) {
 		super(name);
+		this.setType("temporal");
+		String[] splitString = name.split("/");
+		day = Integer.parseInt(splitString[0]);
+		month = Integer.parseInt(splitString[1]);
+		year = Integer.parseInt(splitString[2]);
+	}
+
+	public AttackDay(String name, Attack att) {
+		super(name, att);
 		this.setType("temporal");
 		String[] splitString = name.split("/");
 		day = Integer.parseInt(splitString[0]);
@@ -26,7 +35,7 @@ public class AttackDay extends Classification {
 		else 
 			return false;
 	}
-	
+
 	@Override
 	public boolean compareTo(Attack attack) {
 		if ((day==attack.getDay())&&(month==attack.getMonth())&&(year==attack.getYear())) 
@@ -34,7 +43,7 @@ public class AttackDay extends Classification {
 		else
 			return false;
 	}
-	
+
 	@Override
 	public boolean before(Classification classification) {
 		String[] splitString = classification.getName().split("/");

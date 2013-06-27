@@ -9,11 +9,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.jdesktop.swingx.JXMapViewer;
-
 import com.csvreader.CsvReader;
-
 import controller.maps.MapWaypoint;
 import controller.maps.MapWaypointPainter;
 import controller.maps.MapWaypointRenderer;
@@ -126,92 +123,161 @@ public class ApplicationController {
 	}
 
 	public void sortPerCountry() throws IOException {
-		sortPerIP();
-		ArrayList<IPAddress> ipList = mainBase.getAttackIPAddressList();
-		ArrayList<Country> countryList = new ArrayList<Country>();
-		for(IPAddress ip : ipList) {
-			boolean ind = false;
-			for(Country country : countryList) {
-				if(country.compareTo(ip))
-					country.addIPAddress(ip);
+		if(mainBase.getAttackCountryList().size()==0) {
+			if(mainBase.getAttackIPAddressList().size()==0) {
+				this.sortPerIP();
 			}
-			if(!ind) {
-				Country newCountry = new Country(ip.getCountry());
-				countryList.add(newCountry);
+			ArrayList<Country> countryList = new ArrayList<Country>();
+			ArrayList<String> countryStringList = new ArrayList<String>();
+			ArrayList<IPAddress> tempList = mainBase.getAttackIPAddressList();
+			for(IPAddress ipAdd : tempList) {
+				String country = ipAdd.getCountry();
+				// System.out.println(country);
+				if(countryStringList.contains(country)) {
+					int i = countryStringList.indexOf(country);
+					countryList.get(i).addIPAddress(ipAdd);}
+				else {
+					countryList.add(new Country(country,ipAdd));
+					countryStringList.add(country);
+				}
 			}
+			countryList = sortNumberCountry(countryList);
+			mainBase.setAttackCountryList(countryList);
 		}
-		countryList = sortNumberCountry(countryList);
-		mainBase.setAttackCountryList(countryList);
+		ArrayList<Integer> numberList = new ArrayList<Integer>();
+		ArrayList<String> stringList = new ArrayList<String>();
+		for(Country country : this.mainBase.getAttackCountryList()) {
+			stringList.add(country.getName());
+			numberList.add(country.getNumber());
+		}
+		mainFrame.updateFrame("Pays", "Nombre d'attaques", stringList, numberList, 1, this.getParameters().getPerDateGraph());
 	}
 
 	public void sortPerDay() {
-		ArrayList<AttackDay> dayList = new ArrayList<AttackDay>();
-		boolean ind;
-		for(Attack att : mainBase.getAttackList()) {
-			ind = false;
-			for(AttackDay day : dayList) {
-				if(day.compareTo(att))
-					day.add(att);
+		if(this.mainBase.getAttackDayList().size()==0) {
+			ArrayList<AttackDay> dayList = new ArrayList<AttackDay>();
+			boolean ind;
+			for(Attack att : mainBase.getAttackList()) {
+				ind = false;
+				for(AttackDay day : dayList) {
+					if(day.compareTo(att)) {
+						day.add(att);
+						ind = true;
+						break;
+					}
+				}
+				if(!ind) {
+					AttackDay newDay = new AttackDay(att.getDay()+"/"+att.getMonth()+"/"+att.getYear(), att);
+					dayList.add(newDay);
+				}
 			}
-			if(!ind) {
-				AttackDay newDay = new AttackDay(att.getDay()+"/"+att.getMonth()+"/"+att.getYear());
-				dayList.add(newDay);
-			}
+			dayList = sortAttackDay(dayList);
+			mainBase.setAttackDayList(dayList);
 		}
-		dayList = sortAttackDay(dayList);
-		mainBase.setAttackDayList(dayList);
+		ArrayList<Integer> numberList = new ArrayList<Integer>();
+		ArrayList<String> stringList = new ArrayList<String>();
+		for(AttackDay attackDay : this.mainBase.getAttackDayList()) {
+			stringList.add(attackDay.getName());
+			numberList.add(attackDay.getNumber());
+		}
+		// mainFrame.updateSpreadsheet("Numéro du groupe", "Nombre d\'attaques", stringList, numberList);
+		mainFrame.updateFrame("Jour", "Nombre d'attaques", stringList, numberList, 2, this.getParameters().getPerDateGraph());
 	}
 
 	public void sortPerGroupedAttack() {
 		ArrayList<GroupedAttack> groupList = new ArrayList<GroupedAttack>();
 		boolean ind;
+		int counter = 0;
+		int attCounter = 0;
 		for(Attack att : mainBase.getAttackList()) {
+			attCounter++;
 			ind = false;
 			for(GroupedAttack group : groupList) {
-				if(group.compareTo(att)) 
+				if(group.compareTo(att)) {
 					group.add(att);
+					ind = true;
+				}
 			}
 			if(!ind) {
-				GroupedAttack newGroup = new GroupedAttack("");
+				counter++;
+				GroupedAttack newGroup = new GroupedAttack("groupe n°"+counter, att);
+				System.out.println("groupe n°"+counter+", attaque n°"+attCounter);
 				groupList.add(newGroup);
 			}
 		}
 		groupList = sortNumberGroupedAttack(groupList);
 		mainBase.setGroupedAttackList(groupList);
+		ArrayList<Integer> numberList = new ArrayList<Integer>();
+		ArrayList<String> stringList = new ArrayList<String>();
+		for(GroupedAttack group : groupList) {
+			stringList.add(group.getName());
+			numberList.add(group.getNumber());
+		}
+		mainFrame.updateSpreadsheet("Groupe", "Nombre d\'attaques", stringList, numberList);
 	}
 
 	public void sortPerIP() {
-		ArrayList<IPAddress> ipList = new ArrayList<IPAddress>();
-		boolean ind;
-		for(Attack att : mainBase.getAttackList()) {
-			ind = false;
-			for(IPAddress ip : ipList) {
-				if(ip.compareTo(att)) ip.add(att);
+		if(this.mainBase.getAttackIPAddressList().size()==0) {
+			ArrayList<IPAddress> ipList = new ArrayList<IPAddress>();
+			boolean ind;
+			for(Attack att : mainBase.getAttackList()) {
+				ind = false;
+				for(IPAddress ip : ipList) {
+					if(ip.compareTo(att)) {
+						ip.add(att);
+						ind = true;
+						break;
+					}
+				}
+				if(!ind) {
+					IPAddress newIP = new IPAddress(att.getIP(), att);
+					ipList.add(newIP);
+				}
 			}
-			if(!ind) {
-				IPAddress newIP = new IPAddress(att.getIP());
-				ipList.add(newIP);
-			}
+			ipList = sortNumberIPAddress(ipList);
+			mainBase.setAttackIPAddressList(ipList);
 		}
-		ipList = sortNumberIPAddress(ipList);
-		mainBase.setAttackIPAddressList(ipList);
+		ArrayList<Integer> numberList = new ArrayList<Integer>();
+		ArrayList<String> stringList = new ArrayList<String>();
+		for(IPAddress ip : this.mainBase.getAttackIPAddressList()) {
+			stringList.add(ip.getName());
+			numberList.add(ip.getNumber());
+		}
+		// mainFrame.updateSpreadsheet("Numéro du groupe", "Nombre d\'attaques", stringList, numberList);
+		mainFrame.updateFrame("IP", "Nombre d'attaques", stringList, numberList, 0, this.getParameters().getPerIPGraph());
 	}
 
 	public void sortPerUsername() {
-		ArrayList<AttackUsername> usernameList = new ArrayList<AttackUsername>();
-		boolean ind;
-		for(Attack att : mainBase.getAttackList()) {
-			ind = false;
-			for(AttackUsername username : usernameList) {
-				if(username.compareTo(att)) username.add(att);
+		if(this.mainBase.getAttackUsernameList().size()==0) {
+			ArrayList<AttackUsername> usernameList = new ArrayList<AttackUsername>();
+			boolean ind;
+			int test = 0; // TEST
+			for(Attack att : mainBase.getAttackList()) {
+				test++; // TEST
+				System.out.println(test); // TEST
+				ind = false;
+				for(AttackUsername username : usernameList) {
+					if(username.compareTo(att)) {
+						username.add(att);
+						ind = true;
+						break;
+					}
+				}
+				if(!ind) {
+					AttackUsername newUsername = new AttackUsername(att.getUsername(), att);
+					usernameList.add(newUsername);
+				}
 			}
-			if(!ind) {
-				AttackUsername newUsername = new AttackUsername(att.getUsername());
-				usernameList.add(newUsername);
-			}
+			usernameList = sortNumberAttackUsername(usernameList);
+			mainBase.setAttackUsernameList(usernameList);
 		}
-		usernameList = sortAttackUsername(usernameList);
-		mainBase.setAttackUsernameList(usernameList);
+		ArrayList<Integer> numberList = new ArrayList<Integer>();
+		ArrayList<String> stringList = new ArrayList<String>();
+		for(AttackUsername username : this.mainBase.getAttackUsernameList()) {
+			stringList.add(username.getName());
+			numberList.add(username.getNumber());
+		}
+		mainFrame.updateFrame("Username", "Nombre d'attaques", stringList, numberList, 3, 0);
 	}
 
 	public ArrayList<AttackDay> sortAttackDay(ArrayList<AttackDay> argList) {
@@ -278,7 +344,7 @@ public class ApplicationController {
 		for(int i = 0 ; i<(n-1) ; i++) {
 			min = i;
 			for(int j = i+1 ; j<n ; j++) {
-				if(countryList.get(i).getNumber()>(countryList.get(j).getNumber()))
+				if(!(countryList.get(i).getNumber()>(countryList.get(j).getNumber())))
 					min = j;
 			}
 			if(min!=i) {
@@ -346,16 +412,15 @@ public class ApplicationController {
 		return ipAddressList;
 	}
 
-	public ArrayList<IPAddress> sortNumberIPAddress(ArrayList<IPAddress> argList) {
-		ArrayList<IPAddress> ipAddressList = argList;
+	public ArrayList<IPAddress> sortNumberIPAddress(ArrayList<IPAddress> ipAddressList) {
 		int n = ipAddressList.size();
 		int min = 0;
 		for(int i = 0 ; i<(n-1) ;i++) {
 			min = i;
 			for(int j = i+1 ; j<n ; j++) {
-				if(ipAddressList.get(i).getNumber()>(ipAddressList.get(j).getNumber()))
+				if(!(ipAddressList.get(min).getNumber()>(ipAddressList.get(j).getNumber())))
 					min = j;
-			}
+			} 
 			if(min!=i) {
 				IPAddress tempIPAddress = ipAddressList.get(i);
 				ipAddressList.set(i, ipAddressList.get(min));
@@ -391,27 +456,35 @@ public class ApplicationController {
 
 	public void displayMap() {
 		ArrayList<Country> countries = this.mainBase.getAttackCountryList();
-		JMapPanel map = new JMapPanel(this.mainFrame);
+		if(countries.size()==0) {
+			try {
+				this.sortPerCountry();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			countries = this.mainBase.getAttackCountryList();
+		}
+		JMapPanel map = (JMapPanel) this.mainFrame.getMap();
 		for(Country country : countries) {
 			String currentCountry = "blablabla";
 			CsvReader countriesReader = null;
 			try {
 				countriesReader = new CsvReader("dbcountries.csv");
-				while(!currentCountry.equals(country)) {
+				while(!currentCountry.equals(country.getName())&&!currentCountry.equals("")) {
 					countriesReader.readRecord();
 					currentCountry = countriesReader.get(0);
-					System.out.println(country);
 				}
-				System.out.println(country);
-				System.out.println(currentCountry);
-				int attNb = country.getNumber();
-				Double longitude = new Double(countriesReader.get(2).replace(",","."));
-				Double latitude = new Double(countriesReader.get(3).replace(",","."));
-				this.addPointToMap(map, new JMapPoint(latitude,longitude,attNb));
+				if(!currentCountry.equals("")) {
+					int attNb = country.getNumber();
+					Double longitude = new Double(countriesReader.get(2).replace(",","."));
+					Double latitude = new Double(countriesReader.get(3).replace(",","."));
+					this.addPointToMap(map, new JMapPoint(latitude,longitude,attNb));
+				}
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
 		}
+		this.mainFrame.validate();
 	}
 
 	/**
@@ -438,7 +511,53 @@ public class ApplicationController {
 	}
 
 	public void openSubJFrame(String finalType, String nameRow) {
-		// TODO Auto-generated method stub
+		int i = 0;
+		if(finalType.equals("IP")) {
+			i = 0;
+			for(IPAddress ip : this.mainBase.getAttackIPAddressList()) {
+				if(ip.getName().equals(nameRow)) {
+					new SubFrameController(i, ip.getAttackList(), this.parameters, nameRow);
+					break;
+				}
+			}
+		}
+		if(finalType.equals("Pays")) {
+			i = 1;
+			for(Country country : this.mainBase.getAttackCountryList()) {
+				if(country.getName().equals(nameRow)) {
+					new SubFrameController(i, country.getAttackList(), this.parameters, nameRow);
+					break;
+				}
+			}
+		}
+		if(finalType.equals("Jour")) {
+			i = 2;
+			for(AttackDay day : this.mainBase.getAttackDayList()) {
+				if(day.getName().equals(nameRow)) {
+					new SubFrameController(i, day.getAttackList(), this.parameters, nameRow);
+					break;
+				}
+			}
+		}
+		if(finalType.equals("Username")) {
+			i = 3;
+			for(AttackUsername username : this.mainBase.getAttackUsernameList()) {
+				if(username.getName().equals(nameRow)) {
+					new SubFrameController(i, username.getAttackList(), this.parameters, nameRow);
+					break;
+				}
+			}
+		}
+		if(finalType.equals("Groupe")) {
+			i = 4;
+			for(GroupedAttack group : this.mainBase.getGroupedAttackList()) {
+				if(group.getName().equals(nameRow)) {
+					new SubFrameController(i, group.getAttackList(), this.parameters, nameRow);
+					break;
+				}
+			}
+		}
+		
 
 	}
 

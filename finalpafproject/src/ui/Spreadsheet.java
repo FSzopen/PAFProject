@@ -21,9 +21,22 @@ public class Spreadsheet extends JPanel implements TableModelListener {
 	private JTable table;
 	private TableNonEdit spreadsheetTable;
 	private MainFrame mainFrame;
+	private SubJFrame subJFrame;
 
 	public Spreadsheet(MainFrame mainFrame) {
 		this.mainFrame = mainFrame;
+		spreadsheetTable = new TableNonEdit();
+		spreadsheetTable.addColumn("Entité");
+		spreadsheetTable.addColumn("Nombre d'attaques");
+		spreadsheetTable.setRowCount(15);
+		table = new JTable(spreadsheetTable);
+		table.setPreferredScrollableViewportSize(new Dimension(300, 400));
+		add(new JScrollPane(table), BorderLayout.CENTER);
+		spreadsheetTable.addTableModelListener(this);
+	}
+	
+	public Spreadsheet(SubJFrame subFrame) {
+		this.subJFrame = subFrame;
 		spreadsheetTable = new TableNonEdit();
 		spreadsheetTable.addColumn("Entité");
 		spreadsheetTable.addColumn("Nombre d'attaques");
@@ -37,9 +50,9 @@ public class Spreadsheet extends JPanel implements TableModelListener {
 	@Override
 	public void tableChanged(TableModelEvent arg0) {}
 
-	public void updateList(String type, String var, ArrayList<String> Attacks, ArrayList<Integer> AttackNb) {
+	public void updateList(String type, String var, ArrayList<String> attacks, ArrayList<Integer> attackNb) {
 		final String finalType = type;
-		int n = Attacks.size();
+		int n = attacks.size();
 		Object[] identifiers = {type, var};
 		spreadsheetTable.setColumnIdentifiers(identifiers);
 		int nbRow = spreadsheetTable.getRowCount();
@@ -47,7 +60,7 @@ public class Spreadsheet extends JPanel implements TableModelListener {
 			spreadsheetTable.removeRow(0);
 		}
 		for (int i = 0 ; i<n ; i++) {
-			Object[] line={Attacks.get(i), AttackNb.get(i)};
+			Object[] line={attacks.get(i), attackNb.get(i)};
 			spreadsheetTable.addRow(line);
 		}
 		table.addMouseListener(new MouseListener() {
@@ -58,7 +71,12 @@ public class Spreadsheet extends JPanel implements TableModelListener {
 					int y = e.getY();
 					int height = table.getRowHeight();
 					String nameRow = (String) table.getValueAt((y/height), 0);
+					if(mainFrame!=null) {
 					mainFrame.getController().openSubJFrame(finalType, nameRow);
+					}
+					else {
+						subJFrame.getController().openSubJFrame(finalType, nameRow);
+					}
 				}
 			}
 

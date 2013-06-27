@@ -8,9 +8,15 @@ public class IPAddress extends Classification {
 	public final static String DATA_BASE = "GeoIPCountryWhois.csv";
 	private String country;
 
-	public IPAddress(String name) {
-		super(name);
-		this.setType("username");
+	public IPAddress(Attack attack) {
+		super(attack.getIP());
+		this.setType("ip");
+		this.add(attack);
+	}
+	
+	public IPAddress(String name, Attack attack) {
+		super(name, attack);
+		this.setType("ip");
 	}
 
 	public boolean compareTo(String name) {
@@ -41,25 +47,32 @@ public class IPAddress extends Classification {
 			return false;
 	}
 
-	public boolean before (String ip) {
-		String[] nameSplit = this.getName().split(":");
+	public boolean before(String ip) {
+		String[] nameSplit = this.getName().split("[.]");
 		String firstOctet = complete(nameSplit[0]);
 		String secondOctet = complete(nameSplit[1]);
 		String thirdOctet = complete(nameSplit[2]);
 		String fourthOctet = complete(nameSplit[3]);
-		String[] otherNameSplit = ip.split(":");
+		String[] otherNameSplit = ip.split("[.]");
 		String otherFirstOctet = complete(otherNameSplit[0]);
 		String otherSecondOctet = complete(otherNameSplit[1]);
 		String otherThirdOctet = complete(otherNameSplit[2]);
 		String otherFourthOctet = complete(otherNameSplit[3]);
-		if(Integer.parseInt(firstOctet+secondOctet+thirdOctet+fourthOctet)<Integer.parseInt(otherFirstOctet+otherSecondOctet+otherThirdOctet+otherFourthOctet))
-			return true;
-		else
-			return false;
+		return (Long.parseLong(firstOctet + secondOctet + thirdOctet + fourthOctet)
+				<=Long.parseLong(otherFirstOctet + otherSecondOctet + otherThirdOctet + otherFourthOctet));
 	}
 
 	// GETTERS
-	public String getCountry() { return country; }
+	public String getCountry() { 
+		if(this.country==null) {
+			try {
+				this.setCountry();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return country;
+	}
 
 	// SETTERS
 	public void setCountry(String country) { this.country = country; }
@@ -81,21 +94,25 @@ public class IPAddress extends Classification {
 		dataBase.readRecord();
 		String ipBound = ("0.0.0.0");
 		//TODO: clean condition
-		while(1!=0) {
+		while(!dataBase.get("Country").equals("")) {
 			tempcountry = dataBase.get("Country");
 			if(!dataBase.get("Adr2").equals("Adr2"))
 				ipBound = (dataBase.get("Adr2"));
 			dataBase.readRecord();
-			currentIp = (dataBase.get("Adr1"));
-			if(!(this.before(currentIp))) {
-				if(this.before(ipBound)) {
+			currentIp = dataBase.get("Adr1");
+			if(this.before(currentIp)) {
+				if(!this.before(ipBound)) {
 					dataBase.close();
 					tempcountry = "Error: Unknown country!";
 					country = tempcountry;
+					System.out.println("UNKNOWN: " + tempcountry);
+					break;
 				}
 				else {
-					dataBase.close();
 					country = tempcountry;
+					dataBase.close();
+					System.out.println("KNOWN: " + tempcountry);
+					break;
 				}
 			}
 		}

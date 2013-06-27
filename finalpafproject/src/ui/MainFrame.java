@@ -16,9 +16,9 @@ import controller.ApplicationController;
 public class MainFrame extends JFrame {
 
 	private ApplicationController controller;
-	private Spreadsheet spreadsheet;
+	private Spreadsheet spreadsheet = new Spreadsheet(this);
 	private JPanel graph = new JPanel();
-	private JMapPanel map;
+	private JMapPanel map = new JMapPanel(this);
 
 	/**
 	 * Creates the main frame. Size is 1000x800, title is "Statistiques des attaques par Brute Force", and it contains a menu bar, a main panel (containing a graph or a map), a spreadsheet and buttons.
@@ -30,17 +30,13 @@ public class MainFrame extends JFrame {
 		this.setLocationRelativeTo(null);
 		this.setSize(1000, 550);
 		this.setJMenuBar(new Menu(this));
-		this.spreadsheet = new Spreadsheet(this);
-		this.map = new JMapPanel(this);
 		map.setPreferredSize(new Dimension(600,450));
-		this.getController().displayMap();
 		ButtonsRowPanel b = new ButtonsRowPanel(this);
 		JPanel buttonsWrapper = new JPanel();
 		buttonsWrapper.add(b,BorderLayout.CENTER);
 		this.add(buttonsWrapper, BorderLayout.SOUTH);
 		this.add(spreadsheet, BorderLayout.WEST);
-		graph.add(map, BorderLayout.CENTER);
-		this.add(graph, BorderLayout.CENTER);
+		this.add(map, BorderLayout.CENTER);
 		this.setVisible(true);
 	}
 
@@ -75,9 +71,41 @@ public class MainFrame extends JFrame {
 	 * @param numberList
 	 */
 	public void updateSpreadsheet(String column1, String column2, ArrayList<String> nameList, ArrayList<Integer> numberList) {
-		this.spreadsheet.updateList(column1, column2, nameList, numberList);	
+		this.spreadsheet.updateList(column1, column2, nameList, numberList);
+		
 		this.add(graph, BorderLayout.CENTER);
 		this.validate();
+	}
+	
+	public void updateFrame(String title1, String title2, ArrayList<String> stringList, ArrayList<Integer> intList,int type1, int type2) {
+		if(type2==0) {
+			PieChartPanel pieChart = new PieChartPanel(title1,20, intList,stringList);
+			getContentPane().removeAll();
+			JPanel draw = pieChart.getChartPanel();
+			add(draw, BorderLayout.CENTER);
+			map.setPreferredSize(new Dimension(600,450));
+			ButtonsRowPanel b = new ButtonsRowPanel(this);
+			JPanel buttonsWrapper = new JPanel();
+			buttonsWrapper.add(b,BorderLayout.CENTER);
+			this.spreadsheet.updateList(title1, title2, stringList, intList);
+			this.add(buttonsWrapper, BorderLayout.SOUTH);
+			this.add(spreadsheet, BorderLayout.WEST);
+			this.setVisible(true);
+		}
+		if(type2==1) {
+			CategoryBarChartPanel barChart = new CategoryBarChartPanel("Répartition par IP", title1, stringList, title2, intList, 50, this);
+			getContentPane().removeAll();
+			JPanel draw = barChart.getChartPanel();
+			add(draw, BorderLayout.CENTER);
+			map.setPreferredSize(new Dimension(600,450));
+			ButtonsRowPanel b = new ButtonsRowPanel(this);
+			JPanel buttonsWrapper = new JPanel();
+			buttonsWrapper.add(b,BorderLayout.CENTER);
+			this.spreadsheet.updateList(title1, title2, stringList, intList);
+			this.add(buttonsWrapper, BorderLayout.SOUTH);
+			this.add(spreadsheet, BorderLayout.WEST);
+			this.setVisible(true);
+		}
 	}
 
 	public ApplicationController getController() {
@@ -101,6 +129,7 @@ public class MainFrame extends JFrame {
 	
 	// GETTERS
 	public JPanel getGraph() { return this.graph; }
+	public JMapPanel getMap() { return this.map; }
 
 }
 

@@ -72,7 +72,6 @@ public class MainFrame extends JFrame {
 	 */
 	public void updateSpreadsheet(String column1, String column2, ArrayList<String> nameList, ArrayList<Integer> numberList) {
 		this.spreadsheet.updateList(column1, column2, nameList, numberList);
-		
 		this.add(graph, BorderLayout.CENTER);
 		this.validate();
 	}

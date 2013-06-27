@@ -1,5 +1,7 @@
 package controller;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -9,6 +11,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.swing.JPanel;
+
 import org.jdesktop.swingx.JXMapViewer;
 import com.csvreader.CsvReader;
 import controller.maps.MapWaypoint;
@@ -25,6 +30,8 @@ import database.Parameters;
 import database.Attack;
 import ui.MainFrame;
 import ui.ParameterJFrame;
+import ui.Spreadsheet;
+import ui.buttons.ButtonsRowPanel;
 import ui.maps.JMapPanel;
 import ui.maps.JMapPoint;
 
@@ -484,7 +491,17 @@ public class ApplicationController {
 				e1.printStackTrace();
 			}
 		}
-		this.mainFrame.validate();
+		Spreadsheet spreadsheet = (Spreadsheet) this.mainFrame.getContentPane().getComponent(2);
+		this.mainFrame.getContentPane().removeAll();
+		this.mainFrame.add(map, BorderLayout.CENTER);
+		map.setPreferredSize(new Dimension(600,450));
+		ButtonsRowPanel b = new ButtonsRowPanel(this.mainFrame);
+		JPanel buttonsWrapper = new JPanel();
+		buttonsWrapper.add(b,BorderLayout.CENTER);
+		this.mainFrame.add(buttonsWrapper, BorderLayout.SOUTH);
+		this.mainFrame.add(spreadsheet, BorderLayout.WEST);
+		this.mainFrame.setVisible(true);
+		// this.mainFrame.validate();
 	}
 
 	/**
